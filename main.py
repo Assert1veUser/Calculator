@@ -9,6 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QMessageBox
 
 
 class Ui_MainWindow(object):
@@ -175,6 +176,9 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+        self.add_functions()
+        self.is_equal = False
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Калькулятор"))
@@ -194,6 +198,61 @@ class Ui_MainWindow(object):
         self.btn_minus.setText(_translate("MainWindow", "-"))
         self.btn_multiply.setText(_translate("MainWindow", "*"))
         self.btn_share.setText(_translate("MainWindow", "/"))
+
+    def add_functions(self):
+        self.btn_0.clicked.connect(lambda: self.write_number(self.btn_0.text()))
+        self.btn_1.clicked.connect(lambda: self.write_number(self.btn_1.text()))
+        self.btn_2.clicked.connect(lambda: self.write_number(self.btn_2.text()))
+        self.btn_3.clicked.connect(lambda: self.write_number(self.btn_3.text()))
+        self.btn_4.clicked.connect(lambda: self.write_number(self.btn_4.text()))
+        self.btn_5.clicked.connect(lambda: self.write_number(self.btn_5.text()))
+        self.btn_6.clicked.connect(lambda: self.write_number(self.btn_6.text()))
+        self.btn_7.clicked.connect(lambda: self.write_number(self.btn_7.text()))
+        self.btn_8.clicked.connect(lambda: self.write_number(self.btn_8.text()))
+        self.btn_9.clicked.connect(lambda: self.write_number(self.btn_9.text()))
+        self.btn_plus.clicked.connect(lambda: self.write_number(self.btn_plus.text()))
+        self.btn_minus.clicked.connect(lambda: self.write_number(self.btn_minus.text()))
+        self.btn_multiply.clicked.connect(lambda: self.write_number(self.btn_multiply.text()))
+        self.btn_share.clicked.connect(lambda: self.write_number(self.btn_share.text()))
+        self.btn_equal.clicked.connect(self.results)
+
+    def write_number(self, number):
+        if self.label_result.text() == "0" or self.is_equal:
+            self.label_result.setText(number)
+            self.is_equal = False
+        else:
+            self.label_result.setText(self.label_result.text() + number)
+
+    def results(self):
+        if not self.is_equal:
+            res = eval(self.label_result.text())
+            self.label_result.setText(str(res))
+            self.is_equal = True
+        else:
+            error = QMessageBox()
+            error.setWindowTitle("Ошибка")
+            error.setText("Сейчас это действие выполнить нельзя")
+            error.setIcon(QMessageBox.Warning)
+            error.setStandardButtons(QMessageBox.Ok|QMessageBox.Reset|QMessageBox.Cancel)
+
+            error.setDefaultButton(QMessageBox.Ok)
+            error.setInformativeText("Два раза действие не выполнить")
+            error.setDetailedText("Детали")
+
+            error.buttonClicked.connect(self.popup_action)
+
+            error.exec_()
+
+    def popup_action(self, btn):
+        if btn.text() == "Ok":
+            print("Print Ok")
+        elif btn.text() == "Reset":
+            self.label_result.setText("")
+            self.is_equal = False
+
+
+
+
 
 
 if __name__ == "__main__":
